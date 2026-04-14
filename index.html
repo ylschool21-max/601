@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>영일유치원 - 그림책이 들려준 놀이</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Nanum+Pen+Script&display=swap');
+
+        :root {
+            --primary-bg: #FDF6E3;
+            --accent-red: #E63946;
+            --soft-blue: #A8DADC;
+            --warm-yellow: #FFB703;
+            --leaf-green: #89B061;
+        }
+
+        body {
+            font-family: 'Gaegu', cursive;
+            background-color: var(--primary-bg);
+            color: #444;
+            overflow-x: hidden;
+        }
+
+        .handwritten {
+            font-family: 'Nanum+Pen+Script', cursive;
+        }
+
+        .card-container {
+            perspective: 1000px;
+        }
+
+        .interactive-card {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 3px solid #555;
+            background: white;
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.1);
+        }
+
+        .interactive-card:hover {
+            transform: translateY(-10px) rotate(1deg);
+            box-shadow: 12px 12px 0px rgba(0,0,0,0.15);
+        }
+
+        .btn-pop {
+            transition: transform 0.1s;
+        }
+        .btn-pop:active {
+            transform: scale(0.95);
+        }
+
+        /* Stickers animation */
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            80% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+        .sticker {
+            animation: popIn 0.4s ease-out forwards;
+        }
+
+        .floating-obj {
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+    </style>
+</head>
+<body class="pb-20">
+
+    <!-- Header Section -->
+    <header class="relative py-16 px-6 text-center overflow-hidden">
+        <div class="absolute top-10 left-10 text-4xl floating-obj" style="animation-delay: 0s;">🐰</div>
+        <div class="absolute top-20 right-20 text-4xl floating-obj" style="animation-delay: 1s;">📦</div>
+        <div class="absolute bottom-10 left-1/4 text-4xl floating-obj" style="animation-delay: 2s;">🌟</div>
+
+        <h2 class="text-2xl md:text-3xl text-gray-500 mb-2 handwritten">영일유치원이 선물하는 행복한 시간</h2>
+        <h1 class="text-5xl md:text-7xl font-bold text-[#E63946] mb-8 tracking-tighter">
+            그림책이 들려준 놀이
+        </h1>
+
+        <!-- Main Featured Book -->
+        <div class="max-w-2xl mx-auto bg-[#D2B48C] p-8 rounded-lg shadow-2xl border-4 border-[#8B4513] relative">
+            <div class="flex flex-col md:flex-row items-center gap-8">
+                <div class="w-48 h-48 bg-white flex items-center justify-center p-2 border-2 border-black rotate-[-2deg]">
+                    <img src="https://image.aladin.co.kr/product/21/20/letslook/8984885202_f.jpg" alt="이건 상자가 아니야" class="w-full h-full object-contain">
+                </div>
+                <div class="text-left flex-1 text-[#422B1E]">
+                    <span class="bg-[#E63946] text-white px-3 py-1 rounded-full text-sm mb-2 inline-block">이달의 그림책</span>
+                    <h3 class="text-3xl font-bold mb-2">이건 상자가 아니야</h3>
+                    <p class="text-lg opacity-90 leading-relaxed">
+                        상자 하나로 무엇을 할 수 있을까요?<br>
+                        우리 아이들의 상상력을 무한히 펼쳐보는 시간!
+                    </p>
+                </div>
+            </div>
+            <div class="absolute -bottom-4 -right-4 bg-yellow-400 text-black px-4 py-2 font-bold rounded-lg border-2 border-black rotate-3">
+                놀이 시작!
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Grid Content -->
+    <main class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-10">
+
+        <!-- Card 1: 같은 그림 찾기 -->
+        <div class="interactive-card rounded-2xl p-6">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-500 text-2xl">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3 class="text-2xl font-bold">똑똑! 같은 그림 찾기</h3>
+            </div>
+            <p class="text-gray-500 mb-4">어디에 숨어있을까? 짝꿍을 찾아보세요.</p>
+            <div id="memory-board" class="grid grid-cols-4 gap-2 h-64 bg-gray-50 rounded-xl p-3 content-center">
+                <!-- Memory Cards Injected here -->
+            </div>
+            <button onclick="resetMemoryGame()" class="mt-4 w-full py-3 bg-blue-400 text-white rounded-xl font-bold btn-pop shadow-md">다시 하기</button>
+        </div>
+
+        <!-- Card 2: 상자 쌓기 놀이 -->
+        <div class="interactive-card rounded-2xl p-6">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-orange-500 text-2xl">
+                    <i class="fas fa-cubes"></i>
+                </div>
+                <h3 class="text-2xl font-bold">높이높이! 상자 쌓기</h3>
+            </div>
+            <p class="text-gray-500 mb-4">흔들흔들~ 상자를 얼마나 높이 쌓을 수 있을까요?</p>
+            <div id="stack-area" class="h-64 bg-orange-50 rounded-xl relative flex flex-col-reverse items-center overflow-hidden border-b-4 border-orange-200">
+                <!-- Stacked boxes will go here -->
+                <div id="stack-base" class="w-full h-2 bg-gray-300"></div>
+            </div>
+            <button onclick="addStackBox()" class="mt-4 w-full py-3 bg-orange-400 text-white rounded-xl font-bold btn-pop shadow-md">상자 툭! 쌓기</button>
+        </div>
+
+        <!-- Card 3: 꼬마 타이머 -->
+        <div class="interactive-card rounded-2xl p-6">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-500 text-2xl">
+                    <i class="fas fa-hourglass-start"></i>
+                </div>
+                <h3 class="text-2xl font-bold">칙칙폭폭! 꼬마 타이머</h3>
+            </div>
+            <div class="bg-green-50 rounded-xl p-8 text-center">
+                <div id="timer-display" class="text-6xl font-bold text-green-600 mb-6 tracking-widest">03:00</div>
+                <div class="flex gap-2 justify-center">
+                    <button onclick="setTimer(60)" class="px-4 py-2 bg-white border-2 border-green-200 rounded-lg text-sm">1분</button>
+                    <button onclick="setTimer(180)" class="px-4 py-2 bg-white border-2 border-green-200 rounded-lg text-sm">3분</button>
+                    <button onclick="setTimer(300)" class="px-4 py-2 bg-white border-2 border-green-200 rounded-lg text-sm">5분</button>
+                </div>
+                <div class="flex gap-4 mt-6">
+                    <button id="timer-toggle" onclick="toggleTimer()" class="flex-1 py-3 bg-green-500 text-white rounded-xl font-bold btn-pop shadow-md">시작!</button>
+                    <button onclick="resetTimer()" class="px-6 py-3 bg-gray-200 text-gray-600 rounded-xl font-bold btn-pop"><i class="fas fa-undo"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 4: 칭찬 스티커 -->
+        <div class="interactive-card rounded-2xl p-6">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center text-pink-500 text-2xl">
+                    <i class="fas fa-award"></i>
+                </div>
+                <h3 class="text-2xl font-bold">참 잘했어요! 칭찬 스티커</h3>
+            </div>
+            <p class="text-gray-500 mb-4">오늘의 멋진 행동을 칭찬해요!</p>
+            <div id="sticker-board" class="h-64 bg-pink-50 rounded-xl p-4 grid grid-cols-5 gap-3 overflow-y-auto content-start border-dashed border-2 border-pink-200">
+                <!-- Stickers will be added here -->
+            </div>
+            <div class="flex gap-3 mt-4">
+                <button onclick="addSticker('🌟')" class="flex-1 py-3 bg-yellow-400 text-white rounded-xl text-xl btn-pop shadow-sm">🌟</button>
+                <button onclick="addSticker('❤️')" class="flex-1 py-3 bg-red-400 text-white rounded-xl text-xl btn-pop shadow-sm">❤️</button>
+                <button onclick="addSticker('👑')" class="flex-1 py-3 bg-blue-400 text-white rounded-xl text-xl btn-pop shadow-sm">👑</button>
+                <button onclick="clearStickers()" class="w-12 bg-gray-100 rounded-xl text-gray-400 btn-pop"><i class="fas fa-trash"></i></button>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="mt-20 text-center text-gray-400">
+        <p>경기도 안산시 상록구 영일유치원</p>
+        <p class="mt-2 text-sm">© 2024 영일유치원. 모든 놀이는 상상력으로 완성됩니다.</p>
+    </footer>
+
+    <script>
+        // --- 1. Memory Game Logic ---
+        const icons = ['🐰', '📦', '🎁', '🎈', '🍎', '🌟'];
+        let memoryItems = [...icons, ...icons];
+        let flippedCards = [];
+        let matchedCount = 0;
+
+        function resetMemoryGame() {
+            const board = document.getElementById('memory-board');
+            board.innerHTML = '';
+            memoryItems = [...icons, ...icons].sort(() => Math.random() - 0.5);
+            flippedCards = [];
+            matchedCount = 0;
+
+            memoryItems.forEach((icon, idx) => {
+                const card = document.createElement('div');
+                card.className = 'bg-white border-2 border-blue-100 rounded-lg flex items-center justify-center text-2xl cursor-pointer hover:bg-blue-50 transition-colors h-14';
+                card.dataset.icon = icon;
+                card.dataset.index = idx;
+                card.innerHTML = '<span class="hidden">' + icon + '</span><span class="text-blue-200">?</span>';
+                card.onclick = () => flipMemoryCard(card);
+                board.appendChild(card);
+            });
+        }
+
+        function flipMemoryCard(card) {
+            if (flippedCards.length < 2 && !card.classList.contains('matched') && !flippedCards.includes(card)) {
+                card.children[0].classList.remove('hidden');
+                card.children[1].classList.add('hidden');
+                card.classList.add('bg-blue-100', 'border-blue-400');
+                flippedCards.push(card);
+
+                if (flippedCards.length === 2) {
+                    setTimeout(checkMatch, 600);
+                }
+            }
+        }
+
+        function checkMatch() {
+            const [c1, c2] = flippedCards;
+            if (c1.dataset.icon === c2.dataset.icon) {
+                c1.classList.add('matched', 'invisible');
+                c2.classList.add('matched', 'invisible');
+                matchedCount += 2;
+                if (matchedCount === memoryItems.length) {
+                    setTimeout(() => alert('참 잘했어요! 모두 찾았네요!'), 300);
+                }
+            } else {
+                c1.children[0].classList.add('hidden');
+                c1.children[1].classList.remove('hidden');
+                c1.classList.remove('bg-blue-100', 'border-blue-400');
+                c2.children[0].classList.add('hidden');
+                c2.children[1].classList.remove('hidden');
+                c2.classList.remove('bg-blue-100', 'border-blue-400');
+            }
+            flippedCards = [];
+        }
+
+        // --- 2. Stack Game Logic ---
+        let boxCount = 0;
+        function addStackBox() {
+            const area = document.getElementById('stack-area');
+            if (boxCount > 10) {
+                alert('와! 정말 높이 쌓았어요! 우르르~ 다시 시작!');
+                area.querySelectorAll('.box-item').forEach(el => el.remove());
+                boxCount = 0;
+                return;
+            }
+
+            const box = document.createElement('div');
+            boxCount++;
+            const colors = ['bg-[#E63946]', 'bg-[#FFB703]', 'bg-[#89B061]', 'bg-[#A8DADC]', 'bg-[#F4A261]'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            const width = Math.max(120 - (boxCount * 10), 40);
+            
+            box.className = `box-item ${randomColor} border-2 border-black rounded shadow-sm sticker h-10 mb-[-2px] relative z-10`;
+            box.style.width = width + 'px';
+            box.style.marginLeft = (Math.random() * 10 - 5) + 'px'; // Random slight offset
+            
+            area.insertBefore(box, area.firstChild);
+        }
+
+        // --- 3. Timer Logic ---
+        let timeLeft = 180;
+        let timerRunning = false;
+        let timerInterval = null;
+
+        function updateTimerDisplay() {
+            const m = Math.floor(timeLeft / 60);
+            const s = timeLeft % 60;
+            document.getElementById('timer-display').innerText = 
+                `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        function toggleTimer() {
+            const btn = document.getElementById('timer-toggle');
+            if (timerRunning) {
+                clearInterval(timerInterval);
+                btn.innerText = '다시 시작!';
+                btn.className = btn.className.replace('bg-red-500', 'bg-green-500');
+            } else {
+                timerInterval = setInterval(() => {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateTimerDisplay();
+                    } else {
+                        clearInterval(timerInterval);
+                        alert('따르릉! 시간이 다 되었어요!');
+                    }
+                }, 1000);
+                btn.innerText = '잠깐 멈춤';
+                btn.className = btn.className.replace('bg-green-500', 'bg-red-500');
+            }
+            timerRunning = !timerRunning;
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            timeLeft = 180;
+            updateTimerDisplay();
+            const btn = document.getElementById('timer-toggle');
+            btn.innerText = '시작!';
+            btn.className = 'flex-1 py-3 bg-green-500 text-white rounded-xl font-bold btn-pop shadow-md';
+        }
+
+        function setTimer(sec) {
+            resetTimer();
+            timeLeft = sec;
+            updateTimerDisplay();
+        }
+
+        // --- 4. Sticker Logic ---
+        function addSticker(emoji) {
+            const board = document.getElementById('sticker-board');
+            const sticker = document.createElement('div');
+            sticker.className = 'w-10 h-10 bg-white rounded-full flex items-center justify-center text-xl shadow-inner border border-gray-100 sticker';
+            sticker.innerText = emoji;
+            board.appendChild(sticker);
+        }
+
+        function clearStickers() {
+            document.getElementById('sticker-board').innerHTML = '';
+        }
+
+        // Initialize
+        resetMemoryGame();
+    </script>
+</body>
+</html>
